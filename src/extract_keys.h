@@ -12,7 +12,8 @@ consteval std::size_t key_size() noexcept
 	return 1;
 }
 
-template <atom_list auto const * x>
+template <auto const * x>
+requires atom_list<decltype(*x)>
 consteval std::size_t key_size() noexcept
 {
 	return std::size(*x);
@@ -24,7 +25,8 @@ consteval void extract_key(std::string_view *& p) noexcept
 	*p++ = x.to_string();
 }
 
-template <atom_list auto const * x>
+template <auto const * x>
+requires atom_list<decltype(*x)>
 consteval void extract_key(std::string_view *& p) noexcept
 {
 	constexpr std::size_t size = key_size<x>();
