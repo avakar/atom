@@ -8,10 +8,11 @@ FetchContent_MakeAvailable(avakar.mutest)
 add_library(avakar.atom INTERFACE
 	include/avakar/atom.h
 	src/atom.natvis
-	src/concepts.h
 	src/extract_keys.h
+	src/keylist.h
 	src/literal.h
 	src/size_least.h
+	src/traits.h
 	src/utils.h
 	)
 add_library(avakar::atom ALIAS avakar.atom)

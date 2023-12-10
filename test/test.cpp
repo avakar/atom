@@ -35,6 +35,11 @@ mutest_case("failing atom::from_string")
 	chk !x.has_value();
 }
 
+mutest_case("not default-constructible")
+{
+	chk !std::is_default_constructible_v<bw>;
+}
+
 mutest_case("equality compare")
 {
 	rgb x = "red"_a;

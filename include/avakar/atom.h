@@ -1,14 +1,18 @@
 #include "../src/extract_keys.h"
+#include "../src/keylist.h"
 #include "../src/literal.h"
 #include "../src/size_least.h"
+#include "../src/traits.h"
 #include "../src/utils.h"
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <optional>
+#include <string_view>
 
 namespace avakar {
 
-template <auto... vn>
+template <_atom::keylist auto... vn>
 struct atom
 {
 	static constexpr auto keys = _atom::extract_keys<vn...>();
@@ -16,10 +20,10 @@ struct atom
 
 	using value_type = typename _atom::size_least<keys.size()>::type;
 
-	template <atom_literal A>
+	template <_atom::atom_literal A>
 	constexpr atom(A) noexcept
-	requires (_atom::index_of(keys, A::to_string()) != keys.size())
-		: _v((value_type)_atom::index_of(keys, A::to_string()))
+	requires (_atom::index_of(keys, _atom::to_string<A>()) != keys.size())
+		: _v((value_type)_atom::index_of(keys, _atom::to_string<A>()))
 	{
 	}
 
@@ -59,13 +63,13 @@ struct atom
 		return keys[_v];
 	}
 
-	template <atomish B>
+	template <any_atom B>
 	constexpr bool is() const noexcept
 	{
 		return _to_table<B>[_v] != 0;
 	}
 
-	template <atomish B>
+	template <any_atom B>
 	constexpr std::optional<B> to() const noexcept
 	{
 		auto new_value = _to_table<B>[_v];
@@ -102,7 +106,7 @@ private:
 	template <auto... bn>
 	static constexpr auto _conv_table = _make_conv_table<bn...>();
 
-	template <atomish B>
+	template <any_atom B>
 	static constexpr auto _make_to_table() noexcept
 	{
 		using V = typename _atom::size_least<B::keys.size() + 1>::type;
@@ -125,7 +129,7 @@ private:
 		return r;
 	}
 
-	template <atomish B>
+	template <any_atom B>
 	static constexpr auto _to_table = _make_to_table<B>();
 
 	value_type _v;

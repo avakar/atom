@@ -36,6 +36,18 @@ consteval bool is_subset(
 	return true;
 }
 
+template <std::size_t N>
+constexpr bool has_duplicates(std::array<std::string_view, N> const & x) noexcept
+{
+	for (std::size_t i = 1; i < N; ++i)
+	{
+		if (x[i-1] == x[i])
+			return true;
+	}
+
+	return false;
+}
+
 }
 
 #pragma once

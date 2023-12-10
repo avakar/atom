@@ -1,62 +1,40 @@
-#include "concepts.h"
-#include "literal.h"
+#include "keylist.h"
 #include <algorithm>
 #include <array>
 #include <string_view>
 
 namespace avakar::_atom {
 
-template <atom_literal auto x>
-consteval std::size_t key_size() noexcept
+template <keylist T>
+constexpr void extract_keys(std::string_view *& out, T const & x) noexcept
 {
-	return 1;
+	std::size_t n = size(keylist_tag{}, x);
+	for (std::size_t i = 0; i != n; ++i)
+		*out++ = at(keylist_tag{}, x, i);
 }
 
-template <auto const * x>
-requires atom_list<decltype(*x)>
-consteval std::size_t key_size() noexcept
+template <auto x>
+struct unfuck
 {
-	return std::size(*x);
-}
+	// This works around a msvc bug that occurs when binding a template argument
+	// to a reference. Instead of binding to the argument, we instead copy the
+	// argumnent into an object with static lifetime, then bind to it instead.
+	// For more details about the bug see:
+	// https://developercommunity.visualstudio.com/t/Invalid-code-generatedICE-when-binding-/10537736
+	static constexpr auto value = x;
+};
 
-template <atom_literal auto x>
-consteval void extract_key(std::string_view *& p) noexcept
+template <keylist auto... xn>
+constexpr auto extract_keys() noexcept
 {
-	*p++ = x.to_string();
-}
-
-template <auto const * x>
-requires atom_list<decltype(*x)>
-consteval void extract_key(std::string_view *& p) noexcept
-{
-	constexpr std::size_t size = key_size<x>();
-	for (std::size_t i = 0; i != size; ++i)
-		*p++ = (*x)[i];
-}
-
-template <auto... xn>
-consteval auto extract_keys() noexcept
-{
-	constexpr std::size_t size = (key_size<xn>() + ... + 0);
-	std::array<std::string_view, size> r{};
+	constexpr std::size_t N = (size(keylist_tag{}, unfuck<xn>::value) + ... + 0);
+	std::array<std::string_view, N> r{};
 
 	std::string_view * p = r.data();
-	(extract_key<xn>(p), ...);
+	(extract_keys(p, unfuck<xn>::value), ...);
 
 	std::sort(r.begin(), r.end());
 	return r;
-}
-
-template <std::size_t N>
-consteval bool has_duplicates(std::array<std::string_view, N> const & x) noexcept
-{
-	for (std::size_t i = 1; i < N; ++i)
-	{
-		if (x[i-1] == x[i])
-			return true;
-	}
-
-	return false;
 }
 
 }
