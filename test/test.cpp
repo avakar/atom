@@ -152,3 +152,15 @@ mutest_case("atom::to succ large")
 	chk y.has_value();
 	chk *y == "ff"_a;
 }
+
+mutest_case("atom::visit")
+{
+	rgb x = "green"_a;
+	auto ok = x.visit(
+		[](bw){ return false; },
+		[](atom<"red"_a, "green"_a, "blue"_a> a){
+			return a == "green"_a;
+		}
+	);
+	chk ok;
+}
