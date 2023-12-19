@@ -197,7 +197,7 @@ struct atom
 
 	template <typename F0, typename... Fn>
 	requires (_visit_builder<F0, Fn...>::is_complete)
-	decltype(auto) visit(F0 && f0, Fn &&... fn)
+	decltype(auto) visit(F0 && f0, Fn &&... fn) const
 	{
 		auto const & tbl = _visit_table<F0, Fn...>[_v];
 		return _visit(tbl.fnidx, tbl.val, std::make_index_sequence<keys.size()>{}, (F0 &&)f0, (Fn &&)fn...);
