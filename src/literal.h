@@ -55,6 +55,11 @@ struct a
 	{
 		return x.to_string();
 	}
+
+	constexpr static std::string_view to_string() noexcept
+	{
+		return x.to_string();
+	}
 };
 
 inline namespace literals {
