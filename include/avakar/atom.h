@@ -77,7 +77,59 @@ struct atom
 
 	friend constexpr auto operator<=>(atom lhs, atom rhs) noexcept = default;
 
+	static constexpr auto all() noexcept
+	{
+		return _all_range();
+	}
+
 private:
+	struct _all_iterator
+	{
+		using difference_type = std::ptrdiff_t;
+		using value_type = atom;
+
+		constexpr _all_iterator() noexcept = default;
+
+		constexpr _all_iterator(std::size_t v) noexcept
+			: _v(v)
+		{
+		}
+
+		constexpr atom operator*() const noexcept
+		{
+			return atom((atom::value_type)_v);
+		}
+
+		constexpr _all_iterator & operator++() noexcept
+		{
+			++_v;
+			return *this;
+		}
+
+		constexpr _all_iterator operator++(int) noexcept
+		{
+			return _all_iterator(_v++);
+		}
+
+		friend constexpr auto operator<=>(_all_iterator const &, _all_iterator const &) noexcept = default;
+
+	private:
+		std::size_t _v;
+	};
+
+	struct _all_range
+	{
+		constexpr _all_iterator begin() const noexcept
+		{
+			return _all_iterator(0);
+		}
+
+		constexpr _all_iterator end() const noexcept
+		{
+			return _all_iterator(keys.size());
+		}
+	};
+
 	explicit constexpr atom(value_type v) noexcept
 		: _v(v)
 	{
