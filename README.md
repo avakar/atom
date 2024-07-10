@@ -39,6 +39,25 @@ assert(bw_t::from_string("black") == "black"_a);
 assert(bw_t::from_string("pink") == std::nullopt);
 ```
 
+## Reflection
+
+You can access the list of keys of an atom type with `atom::keys`. The static
+member is a sorted array of `string_view`.
+
+```cpp
+assert(bw_t::keys.size() == 2);
+assert(bw_t::keys[0] == "black"sv);
+assert(bw_t::keys[1] == "white"sv);
+```
+
+To enumerate the atoms instead of the keys, call `atom::iota()`. It returns a
+view (as in `ranges::view`) of the type's atoms (in the sorted order).
+
+```cpp
+for (bw_t a: bw_t::iota())
+    assert(a == "black"_a || a == "white"_a);
+```
+
 ## Subtyping
 
 You can assign an atom type to another as long as the set of atoms in the former
