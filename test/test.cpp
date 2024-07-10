@@ -1,6 +1,9 @@
 #include <avakar/atom.h>
 #include <avakar/mutest.h>
+#include <iterator>
+#include <ranges>
 #include <type_traits>
+#include <vector>
 
 using avakar::atom;
 using namespace avakar::literals;
@@ -20,6 +23,25 @@ mutest_case("keys should be sorted")
 	chk rgb::keys[2] == "green";
 	chk rgb::keys[3] == "red";
 	chk rgb::keys[4] == "white";
+}
+
+mutest_case("atoms can be iterated over")
+{
+	std::vector<bw> all;
+	for (auto a: bw::iota())
+		all.push_back(a);
+	chk all.size() == 2;
+	chk all[0] == "black"_a;
+	chk all[1] == "white"_a;
+}
+
+mutest_case("atom::iota() returns a valid range")
+{
+	chk std::ranges::size(bw::iota()) == 2;
+
+	std::vector<rgb> all;
+	std::ranges::copy(rgb::iota(), std::back_inserter(all));
+	chk all == std::vector<rgb>{"black"_a, "blue"_a, "green"_a, "red"_a, "white"_a};
 }
 
 mutest_case("successful atom::from_string")

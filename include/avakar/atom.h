@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cassert>
 #include <optional>
+#include <ranges>
 
 namespace avakar {
 
@@ -76,6 +77,14 @@ struct atom
 	}
 
 	friend constexpr auto operator<=>(atom lhs, atom rhs) noexcept = default;
+
+	static constexpr auto iota() noexcept
+	{
+		return std::views::transform(
+			std::views::iota((std::size_t)0, keys.size()),
+			[](std::size_t idx) noexcept { return atom((value_type)idx); }
+		);
+	}
 
 private:
 	explicit constexpr atom(value_type v) noexcept
