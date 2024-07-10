@@ -50,8 +50,8 @@ assert(bw_t::keys[0] == "black"sv);
 assert(bw_t::keys[1] == "white"sv);
 ```
 
-To enumerate the atoms instead of the keys, call `atom::iota()`. It returns a
-view (as in `ranges::view`) of the type's atoms (in the sorted order).
+To enumerate atoms instead of keys, call `atom::iota()`. It returns a view (as
+in `ranges::view`) of the type's atoms (in the sorted order).
 
 ```cpp
 for (bw_t a: bw_t::iota())
