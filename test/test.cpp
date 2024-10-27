@@ -97,6 +97,7 @@ mutest_case("assing subtype")
 mutest_case("inverse assign")
 {
 	chk !std::is_assignable_v<bw, rgb>;
+	chk !std::is_assignable_v<atom<"a"_a>, atom<"b"_a>>;
 }
 
 mutest_case("atom::to_string")

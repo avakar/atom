@@ -33,7 +33,7 @@ consteval bool is_subset(
 			++j;
 		++i;
 	}
-	return true;
+	return j == subset.size();
 }
 
 }
